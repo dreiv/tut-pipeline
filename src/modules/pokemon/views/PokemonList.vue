@@ -1,28 +1,28 @@
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
-import { RouterLink } from "vue-router";
-import { pokemonService } from "@/modules/pokemon/services/api";
-import { Routes } from "@/router";
+import { ref, onMounted } from 'vue'
+import { RouterLink } from 'vue-router'
+import { pokemonService } from '@/modules/pokemon/services/api'
+import { Routes } from '@/router'
 
-const pokemonList = ref<{ name: string; url: string }[]>([]);
-const loading = ref(true);
-const error = ref<string | null>(null);
+const pokemonList = ref<{ name: string; url: string }[]>([])
+const loading = ref(true)
+const error = ref<string | null>(null)
 
-const getPokemonId = (url: string) => url.split("/").filter(Boolean).pop();
+const getPokemonId = (url: string) => url.split('/').filter(Boolean).pop()
 
 async function fetchList() {
   try {
-    loading.value = true;
-    const data = await pokemonService.list(0, 20);
-    pokemonList.value = data.results;
+    loading.value = true
+    const data = await pokemonService.list(0, 20)
+    pokemonList.value = data.results
   } catch {
-    error.value = "Failed to load the Pokedex";
+    error.value = 'Failed to load the Pokedex'
   } finally {
-    loading.value = false;
+    loading.value = false
   }
 }
 
-onMounted(fetchList);
+onMounted(fetchList)
 </script>
 
 <template>

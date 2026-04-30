@@ -1,33 +1,33 @@
 <script setup lang="ts">
-import { ref, onMounted, watch } from "vue";
-import { pokemonService } from "@/modules/pokemon/services/api";
-import type { Pokemon } from "@/modules/pokemon/services/schema";
+import { ref, onMounted, watch } from 'vue'
+import { pokemonService } from '@/modules/pokemon/services/api'
+import type { Pokemon } from '@/modules/pokemon/services/schema'
 
 interface Props {
-  id: string;
+  id: string
 }
 
-const props = defineProps<Props>();
-const pokemon = ref<Pokemon | null>(null);
-const loading = ref(true);
-const error = ref<string | null>(null);
+const props = defineProps<Props>()
+const pokemon = ref<Pokemon | null>(null)
+const loading = ref(true)
+const error = ref<string | null>(null)
 
 async function loadPokemon() {
   try {
-    loading.value = true;
-    error.value = null;
+    loading.value = true
+    error.value = null
 
-    pokemon.value = await pokemonService.getById(props.id);
+    pokemon.value = await pokemonService.getById(props.id)
   } catch (e) {
-    error.value = e instanceof Error ? e.message : "Failed to fetch data";
+    error.value = e instanceof Error ? e.message : 'Failed to fetch data'
   } finally {
-    loading.value = false;
+    loading.value = false
   }
 }
 
-onMounted(loadPokemon);
+onMounted(loadPokemon)
 
-watch(() => props.id, loadPokemon);
+watch(() => props.id, loadPokemon)
 </script>
 
 <template>
