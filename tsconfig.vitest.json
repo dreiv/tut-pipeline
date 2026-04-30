@@ -7,7 +7,7 @@
   "compilerOptions": {
     "composite": true,
     "lib": ["ESNext", "DOM", "DOM.Iterable"],
-    "types": ["node", "@vitest/browser/providers/playwright"],
+    "types": ["node", "vitest/browser"],
 
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.vitest.tsbuildinfo"
   }

@@ -5,18 +5,26 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "run-p type-check \"build-only {@}\" --",
     "preview": "vite preview",
+    "prepare": "husky",
+    "check": "run-p lint type-check format:check check:deps",
+    "check:deps": "knip",
+    "fix": "run-s fix:lint fix:format",
+    "fix:lint": "run-s lint:oxlint lint:eslint",
+    "fix:format": "oxfmt",
+    "lint": "run-p lint:oxlint lint:eslint",
+    "lint:oxlint": "oxlint . --fix -D correctness",
+    "lint:eslint": "eslint . --fix --cache",
+    "type-check": "vue-tsc --build",
+    "format": "oxfmt",
+    "format:check": "oxfmt --check",
     "test": "vitest",
     "test:unit": "vitest --project=unit",
     "test:browser": "vitest --project=browser",
+    "test:ui": "vitest --ui",
     "test:e2e": "playwright test",
-    "build-only": "vite build",
-    "type-check": "vue-tsc --build",
-    "lint": "run-s lint:*",
-    "lint:oxlint": "oxlint . --fix",
-    "lint:eslint": "eslint . --fix --cache",
-    "format": "oxfmt src/"
+    "build": "run-s check build-only",
+    "build-only": "vite build"
   },
   "dependencies": {
     "vue": "beta"
@@ -36,7 +44,10 @@
     "eslint-plugin-oxlint": "~1.60.0",
     "eslint-plugin-playwright": "^2.10.1",
     "eslint-plugin-vue": "~10.8.0",
+    "husky": "^9.1.7",
     "jiti": "^2.6.1",
+    "knip": "^5.43.0",
+    "lint-staged": "^16.4.0",
     "npm-run-all2": "^8.0.4",
     "oxfmt": "^0.45.0",
     "oxlint": "~1.60.0",
@@ -47,11 +58,8 @@
     "vitest-browser-vue": "^2.1.0",
     "vue-tsc": "^3.2.6"
   },
-  "engines": {
-    "node": "^20.19.0 || >=22.12.0"
-  },
   "overrides": {
-    "vue": "beta",
+    "@vue/compat": "beta",
     "@vue/compiler-core": "beta",
     "@vue/compiler-dom": "beta",
     "@vue/compiler-sfc": "beta",
@@ -63,6 +71,20 @@
     "@vue/runtime-vapor": "beta",
     "@vue/server-renderer": "beta",
     "@vue/shared": "beta",
-    "@vue/compat": "beta"
+    "vue": "beta"
+  },
+  "lint-staged": {
+    "*.{js,ts,vue}": [
+      "oxlint --fix -D correctness",
+      "eslint --fix --cache",
+      "vitest related --run",
+      "oxfmt"
+    ],
+    "*.{css,json,md}": [
+      "oxfmt"
+    ]
+  },
+  "engines": {
+    "node": "^20.19.0 || >=22.12.0"
   }
 }

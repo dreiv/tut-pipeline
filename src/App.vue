@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import AppHero from "./components/AppHero.vue";
-import PriceCalculator from "./components/PriceCalculator.vue";
+import AppHero from './components/AppHero.vue'
+import PriceCalculator from './components/PriceCalculator.vue'
 </script>
 
 <template>

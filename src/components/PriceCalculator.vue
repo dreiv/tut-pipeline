@@ -24,12 +24,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from "vue";
-import { calculateTotal, formatCurrency } from "@/utils";
+import { ref, computed } from 'vue'
+import { calculateTotal, formatCurrency } from '@/utils'
 
-const qty = ref(1);
-const unitPrice = 99.0;
-const total = computed(() => calculateTotal(unitPrice, qty.value));
+const qty = ref(1)
+const unitPrice = 99.0
+const total = computed(() => calculateTotal(unitPrice, qty.value))
 </script>
 
 <style scoped>
@@ -106,7 +106,7 @@ const total = computed(() => calculateTotal(unitPrice, qty.value));
   }
 
   .count {
-    font-family: "JetBrains Mono", monospace;
+    font-family: 'JetBrains Mono', monospace;
     font-size: 1.25rem;
     font-weight: 700;
     min-width: 2ch;
