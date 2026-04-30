@@ -1,11 +1,35 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import AppHero from "./components/AppHero.vue";
+import PriceCalculator from "./components/PriceCalculator.vue";
+</script>
 
 <template>
-  <h1>You did it!</h1>
-  <p>
-    Visit <a href="https://vuejs.org/" target="_blank" rel="noopener">vuejs.org</a> to read the
-    documentation
-  </p>
+  <main id="app">
+    <AppHero title="V+ Pipeline" />
+
+    <div id="center">
+      <PriceCalculator />
+    </div>
+
+    <div class="ticks" />
+
+    <footer class="footer">
+      <p>Built with Vite+ Monorepo</p>
+    </footer>
+  </main>
 </template>
 
-<style scoped></style>
+<style scoped>
+#center {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.footer {
+  padding: 2rem;
+  text-align: center;
+  font-size: 0.8rem;
+  opacity: 0.6;
+}
+</style>

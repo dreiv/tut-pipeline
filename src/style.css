@@ -1,0 +1,48 @@
+:root {
+  --orange-500: #f97316;
+  --zinc-50: #fafafa;
+  --zinc-100: #f4f4f5;
+  --zinc-200: #e4e4e7;
+  --zinc-400: #a1a1aa;
+  --zinc-800: #27272a;
+  --zinc-950: #09090b;
+
+  --accent: var(--orange-500);
+  --bg: #ffffff;
+  --text: #3f3f46;
+  --text-h: var(--zinc-950);
+  --accent-bg: #fff7ed;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: var(--zinc-950);
+    --text: var(--zinc-400);
+    --text-h: var(--zinc-50);
+    --accent-bg: rgba(249, 115, 22, 0.05);
+  }
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  background-image: radial-gradient(var(--zinc-100) 1px, transparent 1px);
+  background-size: 24px 24px;
+  color: var(--text);
+  font-family: "Inter", system-ui, sans-serif;
+}
+
+@media (prefers-color-scheme: dark) {
+  body {
+    background-image: radial-gradient(var(--zinc-800) 1px, transparent 1px);
+  }
+}
+
+#app {
+  max-width: 600px;
+  margin: 0 auto;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: 0 1.5rem;
+}
