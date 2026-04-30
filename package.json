@@ -23,7 +23,9 @@
     "test:browser": "vitest --project=browser",
     "test:e2e": "playwright test",
     "build": "run-s check build-only",
-    "build-only": "vite build"
+    "build-only": "vite build",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
   },
   "dependencies": {
     "lucide-vue-next": "^1.0.0",
@@ -33,6 +35,8 @@
   },
   "devDependencies": {
     "@playwright/test": "^1.59.1",
+    "@storybook/addon-docs": "^10.3.6",
+    "@storybook/vue3-vite": "^10.3.6",
     "@tailwindcss/vite": "^4.2.4",
     "@tsconfig/node24": "^24.0.4",
     "@types/node": "^24.12.2",
@@ -54,6 +58,7 @@
     "npm-run-all2": "^8.0.4",
     "oxfmt": "^0.45.0",
     "oxlint": "~1.60.0",
+    "storybook": "^10.3.6",
     "tailwindcss": "^4.2.4",
     "typescript": "~6.0.0",
     "vite": "^8.0.8",
