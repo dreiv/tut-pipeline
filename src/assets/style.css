@@ -3,91 +3,46 @@
 @theme {
   --color-bg: var(--bg);
   --color-text: var(--text);
-  --color-text-h: var(--text-h);
-  --color-border: var(--border);
   --color-accent: var(--accent);
-  --color-accent-bg: var(--accent-bg);
-  --color-accent-border: var(--accent-border);
 
-  --animate-duration-normal: var(--duration-normal);
-  --animate-duration-fast: var(--duration-fast);
-  --animate-duration-slow: var(--duration-slow);
-
-  --shadow-soft: var(--shadow);
-  --font-sans: var(--sans);
-
-  --color-zinc-50: #fafafa;
-  --color-zinc-800: #27272a;
+  --color-accent-bg: oklch(from var(--accent) l c h / 0.05);
+  --color-accent-border: oklch(from var(--accent) l c h / 0.15);
 }
 
 @layer base {
   :root {
-    --bg: #fafaf9;
-    --text: #44403c;
-    --text-h: #1c1917;
-    --border: #eaddd7;
     --accent: #f47121;
-    --accent-bg: rgba(244, 113, 33, 0.05);
-    --accent-border: rgba(244, 113, 33, 0.15);
-
-    --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.04);
-    --dot-color: #e4e4e7;
-
-    --sans: 'Inter', system-ui, sans-serif;
-    --duration-normal: 200ms;
-    --duration-fast: 150ms;
-    --duration-slow: 300ms;
+    --dot-color: light-dark(#e4e4e7, #27272a);
+    --bg: light-dark(#fafaf9, #1c1917);
+    --text: light-dark(#44403c, #a8a29e);
+    --text-h: light-dark(#1c1917, #fafaf9);
 
     color-scheme: light dark;
-    font-family: var(--sans);
-    font-size: 18px;
+    font-family: 'Inter', system-ui, sans-serif;
+
+    font-size: clamp(16px, 1cqi + 0.5rem, 18px);
     line-height: 1.6;
-  }
-
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --bg: #1c1917;
-      --text: #a8a29e;
-      --text-h: #fafaf9;
-      --border: #44403c;
-      --accent: #fb923c;
-      --accent-bg: rgba(251, 146, 60, 0.15);
-      --dot-color: #27272a;
-    }
-  }
-
-  @media (max-width: 1024px) {
-    :root {
-      font-size: 16px;
-    }
   }
 
   body {
     margin: 0;
     color: var(--text);
     background-color: var(--bg);
-
     background-image: radial-gradient(var(--dot-color) 1px, transparent 1px);
     background-size: 24px 24px;
+
     transition:
-      background-color var(--duration-normal),
-      color var(--duration-normal);
+      background-color 200ms ease,
+      color 200ms ease;
+  }
+}
+
+@layer components {
+  .router-link-active:not(.logo) {
+    @apply text-accent;
   }
 
-  #app {
-    max-width: 600px;
-    margin: 0 auto;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    padding: 0 1.5rem;
-  }
-
-  h1,
-  h2,
-  h3,
-  h4 {
-    color: var(--text-h);
-    font-weight: 700;
+  .router-link-active .lucide {
+    @apply text-accent;
   }
 }
