@@ -3,25 +3,31 @@ import { mergeConfig, defineConfig, configDefaults } from 'vitest/config'
 import { playwright } from '@vitest/browser-playwright'
 import viteConfig from './vite.config'
 
-export default mergeConfig(
-  viteConfig,
-  defineConfig({
-    test: {
-      setupFiles: ['./src/test/setup.ts'],
-      globals: true,
-      root: fileURLToPath(new URL('./', import.meta.url)),
+const commonTestConfig = {
+  setupFiles: [fileURLToPath(new URL('./src/test/setup.ts', import.meta.url))],
+  globals: true,
+}
 
-      projects: [
-        mergeConfig(viteConfig, {
+export default defineConfig({
+  test: {
+    ...commonTestConfig,
+    root: fileURLToPath(new URL('./', import.meta.url)),
+    projects: [
+      {
+        ...mergeConfig(viteConfig, {
           test: {
+            ...commonTestConfig,
             name: 'unit',
             environment: 'node',
             include: ['src/**/*.unit.{test,spec}.ts'],
             exclude: [...configDefaults.exclude, 'e2e/**'],
           },
         }),
-        mergeConfig(viteConfig, {
+      },
+      {
+        ...mergeConfig(viteConfig, {
           test: {
+            ...commonTestConfig,
             name: 'browser',
             include: ['src/**/*.browser.{test,spec}.ts'],
             browser: {
@@ -32,7 +38,7 @@ export default mergeConfig(
             },
           },
         }),
-      ],
-    },
-  }),
-)
+      },
+    ],
+  },
+})

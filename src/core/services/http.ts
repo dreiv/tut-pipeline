@@ -1,5 +1,3 @@
-const BASE_URL = import.meta.env.VITE_API_URL || ''
-
 interface HttpOptions extends RequestInit {
   params?: Record<string, string | number | string[] | number[] | undefined>
 }
@@ -7,38 +5,38 @@ interface HttpOptions extends RequestInit {
 async function request<T>(endpoint: string, options: HttpOptions = {}): Promise<T> {
   const { params, headers: customHeaders, ...fetchOptions } = options
 
-  let queryString = ''
-  if (params) {
-    const searchParams = new URLSearchParams()
+  const baseUrl = import.meta.env.VITE_API_URL || ''
 
+  const url = new URL(
+    endpoint.startsWith('http') ? endpoint : `${baseUrl}${endpoint}`,
+    'http://localhost',
+  )
+
+  if (params) {
     Object.entries(params).forEach(([key, value]) => {
       if (value === undefined || value === null) return
       if (Array.isArray(value)) {
-        value.forEach((v) => searchParams.append(key, String(v)))
+        value.forEach((v) => url.searchParams.append(key, String(v)))
       } else {
-        searchParams.set(key, String(value))
+        url.searchParams.set(key, String(value))
       }
     })
-
-    const qs = searchParams.toString()
-    queryString = qs ? `?${qs}` : ''
   }
 
-  const headers = new Headers({
-    'Content-Type': 'application/json',
-    Accept: 'application/json',
-    ...customHeaders,
-  })
-
-  const response = await fetch(`${BASE_URL}${endpoint}${queryString}`, {
+  const response = await fetch(url.toString(), {
     ...fetchOptions,
-    headers,
+    headers: {
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+      ...customHeaders,
+    },
   })
 
   if (!response.ok) {
     const errorBody = await response.json().catch(() => ({}))
     throw new Error(errorBody.message || `HTTP ${response.status}: ${response.statusText}`)
   }
+
   return response.status === 204 ? ({} as T) : response.json()
 }
 
