@@ -5,7 +5,7 @@ import App from './App.vue'
 import router from './router'
 
 async function enableMocking() {
-  if (import.meta.env.DEV) {
+  if (import.meta.env.DEV && import.meta.env.VITE_USE_MSW === 'true') {
     const { worker } = await import('./mocks/browser')
 
     // onUnhandledRequest: 'bypass' ensures real
