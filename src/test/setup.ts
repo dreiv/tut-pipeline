@@ -1,7 +1,20 @@
-import { afterAll, vi } from 'vitest'
+import { beforeAll, afterEach, afterAll, vi } from 'vitest'
+import { getInterceptor } from './msw-interceptor'
 
-afterAll(() => {
+const interceptor = await getInterceptor()
+
+beforeAll(async () => {
+  await interceptor.start()
+})
+
+afterEach(() => {
+  interceptor.instance.resetHandlers()
+
   vi.unstubAllGlobals()
   vi.unstubAllEnvs()
   vi.clearAllMocks()
+})
+
+afterAll(async () => {
+  await interceptor.stop()
 })
