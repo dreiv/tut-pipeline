@@ -33,4 +33,4 @@ server/src/_generated/
 *.njsproj
 *.sln
 *.sw?
-
+.vitest-attachments

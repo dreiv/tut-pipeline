@@ -1,45 +1,54 @@
 import { expect, it, describe } from 'vitest'
 import { render } from 'vitest-browser-vue'
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createMemoryHistory } from 'vue-router'
 import MainLayout from './MainLayout.vue'
 
 const router = createRouter({
-  history: createWebHistory(),
+  history: createMemoryHistory(),
   routes: [
-    { path: '/', component: { template: 'Home' } },
-    { path: '/favorites', component: { template: 'Favorites' } },
-    { path: '/my-team', component: { template: 'Team' } },
+    { path: '/', component: { template: '<div>Home Page Content</div>' } },
+    { path: '/favorites', component: { template: '<div>Favorites Page Content</div>' } },
+    { path: '/my-team', component: { template: '<div>Team Page Content</div>' } },
   ],
 })
 
 describe('MainLayout', () => {
-  it('renders the logo and navigation links', async () => {
-    const { getByRole } = render(MainLayout, { global: { plugins: [router] } })
+  it('renders the logo and nav items with correct accessibility roles', async () => {
+    const screen = render(MainLayout, { global: { plugins: [router] } })
 
-    const header = getByRole('banner')
+    const header = screen.getByRole('banner')
+    const nav = screen.getByRole('navigation')
 
     await expect.element(header.getByText('Poke')).toBeVisible()
-    await expect.element(header.getByText('Dexy')).toBeVisible()
+
+    await expect.element(nav.getByRole('link', { name: /favorites/i })).toBeVisible()
+    await expect.element(nav.getByRole('link', { name: /my team/i })).toBeVisible()
   })
 
-  it('renders the correct current year in the footer', async () => {
+  it('navigates and renders route content inside the layout', async () => {
+    const screen = render(MainLayout, { global: { plugins: [router] } })
+
+    await router.push('/')
+    await expect.element(screen.getByText('Home Page Content')).toBeVisible()
+
+    const favoritesLink = screen.getByRole('link', { name: /favorites/i })
+    await favoritesLink.click()
+
+    await expect.element(screen.getByText('Favorites Page Content')).toBeVisible()
+  })
+
+  it('displays the footer with the correct copyright year', async () => {
     const currentYear = new Date().getFullYear().toString()
-    const { getByText } = render(MainLayout, {
-      global: { plugins: [router] },
-    })
+    const screen = render(MainLayout, { global: { plugins: [router] } })
 
-    await expect.element(getByText(new RegExp(currentYear))).toBeVisible()
+    const footer = screen.getByRole('contentinfo')
+    await expect.element(footer.getByText(new RegExp(currentYear))).toBeVisible()
   })
 
-  it('renders slot content correctly', async () => {
-    const testContent = 'Hello from the slot!'
-    const { getByText } = render(MainLayout, {
-      global: { plugins: [router] },
-      slots: {
-        default: `<div>${testContent}</div>`,
-      },
-    })
+  it('does not show the favorite badge when count is zero', async () => {
+    const screen = render(MainLayout, { global: { plugins: [router] } })
 
-    await expect.element(getByText(testContent)).toBeVisible()
+    const badge = screen.getByText(/^\d+$/)
+    await expect.element(badge).not.toBeInTheDocument()
   })
 })

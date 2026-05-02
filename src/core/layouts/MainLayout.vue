@@ -45,7 +45,6 @@ const currentYear = new Date().getFullYear()
           <component :is="Component" />
         </transition>
       </RouterView>
-      <slot />
     </main>
 
     <footer class="border-t border-border py-10 bg-bg/50">
