@@ -4,9 +4,23 @@
   --color-bg: var(--bg);
   --color-text: var(--text);
   --color-accent: var(--accent);
+  --color-text-h: var(--text-h);
 
   --color-accent-bg: oklch(from var(--accent) l c h / 0.05);
   --color-accent-border: oklch(from var(--accent) l c h / 0.15);
+
+  --animate-fade: fade 0.2s ease-out;
+
+  @keyframes fade {
+    from {
+      opacity: 0;
+      transform: translateY(4px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
 }
 
 @layer base {
@@ -16,10 +30,10 @@
     --bg: light-dark(#fafaf9, #1c1917);
     --text: light-dark(#44403c, #a8a29e);
     --text-h: light-dark(#1c1917, #fafaf9);
+    --border: light-dark(#e7e5e4, #2e2a27);
 
     color-scheme: light dark;
     font-family: 'Inter', system-ui, sans-serif;
-
     font-size: clamp(16px, 1cqi + 0.5rem, 18px);
     line-height: 1.6;
   }
@@ -30,7 +44,6 @@
     background-color: var(--bg);
     background-image: radial-gradient(var(--dot-color) 1px, transparent 1px);
     background-size: 24px 24px;
-
     transition:
       background-color 200ms ease,
       color 200ms ease;
@@ -38,11 +51,20 @@
 }
 
 @layer components {
+  .nav-item,
+  .logo {
+    @apply flex items-center gap-2 px-3 py-1.5 rounded-xl transition-all duration-200;
+  }
+
   .router-link-active:not(.logo) {
-    @apply text-accent;
+    @apply text-accent bg-accent/5 font-bold;
   }
 
   .router-link-active .lucide {
     @apply text-accent;
+  }
+
+  .logo:hover .text-accent {
+    filter: drop-shadow(0 0 8px color-mix(in srgb, var(--accent), transparent 50%));
   }
 }
