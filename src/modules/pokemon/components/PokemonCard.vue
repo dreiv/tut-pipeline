@@ -3,17 +3,14 @@ import { Heart, Plus, Trash2 } from 'lucide-vue-next'
 import { usePokemonStore } from '../stores/pokemonStore'
 import { computed } from 'vue'
 
-const props = defineProps<{
-  name: string
-  id: number
-}>()
+const { id } = defineProps<{ name: string; id: number }>()
 
 const store = usePokemonStore()
-const isFavorite = computed(() => store.favorites.includes(props.id))
-const isOnTeam = computed(() => store.team.includes(props.id))
+const isFavorite = computed(() => store.favorites.includes(id))
+const isOnTeam = computed(() => store.team.includes(id))
 
 // Official High-Res Artwork
-const imageUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${props.id}.png`
+const imageUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`
 </script>
 
 <template>
@@ -23,24 +20,18 @@ const imageUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprit
     <div class="absolute top-4 right-4 flex flex-col gap-2 z-10">
       <button
         @click.stop.prevent="store.toggleFavorite(id)"
-        class="p-2.5 rounded-xl border border-white/20 bg-white/5 backdrop-blur-md saturate-150 transition-all duration-300 hover:scale-110 active:scale-95 shadow-lg"
-        :class="[
-          isFavorite
-            ? 'opacity-100 text-accent border-accent/40 bg-accent/10'
-            : 'opacity-0 group-hover:opacity-100 text-text/40 hover:text-text hover:bg-white/20',
-        ]"
+        class="glass-button"
+        :class="isFavorite ? 'card-action-btn-active' : 'card-action-btn'"
       >
         <Heart class="w-5 h-5" :class="{ 'fill-current': isFavorite }" />
       </button>
 
       <button
         @click.stop.prevent="isOnTeam ? store.removeFromTeam(id) : store.addToTeam(id)"
-        class="p-2.5 rounded-xl border border-white/20 bg-white/5 backdrop-blur-md saturate-150 opacity-0 group-hover:opacity-100 transition-all duration-300 hover:scale-110 active:scale-95 shadow-lg"
-        :class="[
-          isOnTeam
-            ? 'text-primary border-primary/40 bg-primary/10'
-            : 'text-text/40 hover:text-text hover:bg-white/20',
-        ]"
+        class="glass-button card-action-btn"
+        :class="{
+          'card-action-btn-active !text-primary !border-primary/30 !bg-primary/10': isOnTeam,
+        }"
       >
         <component :is="isOnTeam ? Trash2 : Plus" class="w-5 h-5" />
       </button>
