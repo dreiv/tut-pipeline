@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import MainLayout from '@/core/layouts/MainLayout.vue'
+import DefaultLayout from '@/core/layouts/DefaultLayout.vue'
 
 export const Routes = {
   HOME: 'home',
@@ -15,7 +15,7 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      component: MainLayout,
+      component: DefaultLayout,
       children: [
         // Home - Pokemon List
         {
@@ -34,13 +34,13 @@ const router = createRouter({
         {
           path: 'favorites',
           name: Routes.FAVORITES,
-          component: () => import('@/modules/favorites/views/FavoritesView.vue'),
+          component: () => import('@/modules/collection/FavoritesView.vue'),
         },
         // My Team
         {
           path: 'my-team',
           name: Routes.MY_TEAM,
-          component: () => import('@/modules/my-team/views/MyTeamView.vue'),
+          component: () => import('@/modules/collection/MyTeamView.vue'),
         },
       ],
     },

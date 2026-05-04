@@ -2,7 +2,7 @@
 import { ref, onMounted } from 'vue'
 import { useIntersectionObserver } from '@vueuse/core'
 import { usePokemonStore } from '../stores/pokemonStore'
-import { ChevronDown } from 'lucide-vue-next' // Added for the dropdown icon
+import { ChevronDown, Loader2 } from 'lucide-vue-next'
 import PokemonGrid from '../components/PokemonGrid.vue'
 
 const store = usePokemonStore()
@@ -32,10 +32,12 @@ const typeNames = [
 ]
 
 async function loadPokemon() {
+  // Guard: Stop if we are already loading, at the end, or filtered by type
   if (loading.value || !store.hasMore || store.activeType) return
 
   try {
     loading.value = true
+    error.value = null
     await store.fetchNextPage()
   } catch {
     error.value = 'Failed to load the Pokedex'
@@ -46,13 +48,14 @@ async function loadPokemon() {
 
 async function handleTypeChange(event: Event) {
   const target = event.target as HTMLSelectElement
-  const typeName = target.value || null // Handle "All Pokemon" selection
+  const typeName = target.value || null
 
   if (loading.value) return
   error.value = null
 
   try {
     loading.value = true
+    // Single API call via the store/service
     await store.fetchByType(typeName)
   } catch {
     error.value = `Failed to load ${typeName} Pokemon`
@@ -61,8 +64,9 @@ async function handleTypeChange(event: Event) {
   }
 }
 
+// Infinite scroll - only active when not filtering
 useIntersectionObserver(loadMoreTrigger, ([entry]) => {
-  if (entry?.isIntersecting) {
+  if (entry?.isIntersecting && !store.activeType) {
     loadPokemon()
   }
 })
@@ -74,20 +78,19 @@ onMounted(() => {
 
 <template>
   <div class="space-y-8">
-    <!-- Header with Dropdown Filter -->
     <header
       class="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-border pb-8"
     >
       <div>
         <h1 class="text-4xl font-black capitalize tracking-tighter text-text-h leading-none">
-          {{ store.activeType ? `${store.activeType} type` : 'National Pokedex' }}
+          {{ store.activeType ? `${store.activeType} type` : 'Pokedex' }}
         </h1>
         <p class="text-text/60 mt-2 font-medium">
-          Showing {{ store.pokemonList.length }} of {{ store.totalCount }} Pokemon
+          Showing <span class="text-text-h font-bold">{{ store.pokemonList.length }}</span> of
+          {{ store.totalCount }} Pokemon
         </p>
       </div>
 
-      <!-- Filter Dropdown -->
       <div class="relative min-w-[200px]">
         <label
           for="type-filter"
@@ -100,10 +103,10 @@ onMounted(() => {
             id="type-filter"
             :value="store.activeType || ''"
             @change="handleTypeChange"
-            class="w-full appearance-none bg-bg-h border border-border rounded-xl px-4 py-3 text-sm font-bold text-text-h focus:outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent/50 transition-all cursor-pointer"
+            class="w-full appearance-none bg-bg border border-border rounded-xl px-4 py-3 text-sm font-bold text-text-h focus:outline-none focus:ring-4 focus:ring-accent/10 focus:border-accent transition-all cursor-pointer shadow-sm"
           >
             <option value="">All Pokemon</option>
-            <option v-for="type in typeNames" :key="type" :value="type" class="capitalize bg-bg">
+            <option v-for="type in typeNames" :key="type" :value="type" class="capitalize">
               {{ type }}
             </option>
           </select>
@@ -114,33 +117,31 @@ onMounted(() => {
       </div>
     </header>
 
-    <!-- Error State -->
     <div
       v-if="error"
-      class="p-8 text-center bg-red-500/5 border border-red-500/20 rounded-3xl text-red-500"
+      class="p-8 text-center bg-accent/5 border border-accent/20 rounded-3xl text-accent font-bold"
     >
       {{ error }}
     </div>
 
-    <!-- Grid -->
     <PokemonGrid :pokemon="store.pokemonList" />
 
-    <!-- Skeletons & Infinite Scroll Sentinel -->
     <div ref="loadMoreTrigger" class="space-y-6 pt-10">
       <div v-if="loading" class="grid grid-cols-[repeat(auto-fill,minmax(220px,1fr))] gap-6">
         <div
           v-for="i in 4"
           :key="i"
-          class="h-64 bg-bg-h border border-border rounded-3xl animate-pulse"
+          class="h-64 bg-text-h/5 border border-border rounded-3xl animate-pulse"
         />
       </div>
 
-      <div class="h-20 flex items-center justify-center">
+      <div class="h-20 flex flex-col items-center justify-center gap-2">
+        <Loader2 v-if="loading" class="w-6 h-6 animate-spin text-accent" />
         <p
-          v-if="!store.hasMore && !loading"
-          class="text-text/40 font-bold tracking-widest uppercase text-xs"
+          v-else-if="!store.hasMore"
+          class="text-text/40 font-bold tracking-widest uppercase text-[10px] bg-border/30 px-4 py-1.5 rounded-full"
         >
-          {{ store.activeType ? `End of results` : 'National Pokedex Complete' }}
+          {{ store.activeType ? `End of results` : 'Pokedex Complete' }}
         </p>
       </div>
     </div>

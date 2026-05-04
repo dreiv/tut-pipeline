@@ -18,13 +18,11 @@ export const handlers = [
     const limit = Number(url.searchParams.get('limit')) || 20
     const offset = Number(url.searchParams.get('offset')) || 0
 
-    // Lowered to 64 for easier testing of the "End of List" state
     const TOTAL_POKEMON = 64
 
     const results = Array.from({ length: limit }, (_, i) => {
       const id = offset + i + 1
 
-      // Stop generating if we exceed our mock total
       if (id > TOTAL_POKEMON) return null
 
       return {

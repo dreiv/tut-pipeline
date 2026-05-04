@@ -5,17 +5,16 @@ import {
   PokemonSpeciesSchema,
   EvolutionChainSchema,
   PokemonTypeResponseSchema,
+  PokemonListItemSchema,
   type Pokemon,
   type PokemonSpecies,
   type EvolutionChain,
-  type PokemonTypeResponse,
+  type PokemonListItem,
 } from './schema'
 
 /**
- * Utility to extract the ID from a PokeAPI URL
- * (e.g., "https://pokeapi.co/api/v2/pokemon/25/" -> 25)
- * Since many list-based endpoints don't return the ID directly,
- * this helper allows us to identify resources without secondary API calls.
+ * Extracts the ID from a PokeAPI URL.
+ * Essential for constructing image URLs without extra API hits.
  */
 const extractIdFromUrl = (url: string): number => {
   const parts = url.split('/').filter(Boolean)
@@ -24,65 +23,74 @@ const extractIdFromUrl = (url: string): number => {
 
 export const pokemonService = {
   /**
-   * Fetches a paginated list of Pokemon.
-   * Includes the ID in the result to avoid extra detail calls for list views.
-   * This is essential for the infinite scroll efficiency in the main Pokedex.
+   * 1. The "True" One-Call List
+   * Fetches only the basic directory. Maps data to include IDs and Images
+   * locally so the UI can render a full card immediately.
    */
-  async list(offset = 0, limit = 20) {
+  async list(offset = 0, limit = 20): Promise<{ count: number; results: PokemonListItem[] }> {
     const data = await http.get<{
       count: number
       results: { name: string; url: string }[]
     }>('/pokemon', { offset, limit })
 
+    const results = data.results.map((p) => {
+      const id = extractIdFromUrl(p.url)
+      return parse(PokemonListItemSchema, {
+        ...p,
+        id,
+        // High-res source constructed manually - zero network cost
+        image: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`,
+      })
+    })
+
     return {
       count: data.count,
-      results: data.results.map((p) => ({
-        ...p,
-        id: extractIdFromUrl(p.url),
-      })),
+      results,
     }
   },
 
   /**
-   * Fetches Pokemon grouped by a specific type (e.g., 'fire', 'water').
-   * Note: This PokeAPI endpoint is not paginated, so we return the full
-   * typed collection for the store to handle.
+   * 2. The Type Filter (One-Call)
+   * Retrieves the full list of Pokemon for a type and maps them
+   * to our ListItem shape with manual image URLs.
    */
-  async getByType(typeName: string): Promise<PokemonTypeResponse> {
+  async getByType(typeName: string): Promise<PokemonListItem[]> {
     const data = await http.get(`/type/${typeName}`)
-    return parse(PokemonTypeResponseSchema, data)
+    const parsed = parse(PokemonTypeResponseSchema, data)
+
+    return parsed.pokemon.map((item) => {
+      const id = extractIdFromUrl(item.pokemon.url)
+      return {
+        id,
+        name: item.pokemon.name,
+        url: item.pokemon.url,
+        image: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`,
+      }
+    })
   },
 
   /**
-   * Fetches all Pokemon names and URLs.
-   * Useful for internal maps or specific data-fetching strategies
-   * that require knowing the full list of available names.
-   */
-  async getAllNames() {
-    return http.get<{ results: { name: string; url: string }[] }>('/pokemon', { limit: 2000 })
-  },
-
-  /**
-   * Fetches base stats, types, and official-artwork sprites.
+   * 3. Detail Fetcher
+   * ONLY called when the user navigates to the detail page.
    */
   async getById(id: number | string): Promise<Pokemon> {
     const data = await http.get(`/pokemon/${id}`)
     return parse(PokemonSchema, data)
   },
 
-  /**
-   * Fetches species data, including flavor text and evolution chain links.
-   */
   async getSpecies(id: number | string): Promise<PokemonSpecies> {
     const data = await http.get(`/pokemon-species/${id}`)
     return parse(PokemonSpeciesSchema, data)
   },
 
-  /**
-   * Fetches the recursive evolution chain.
-   */
   async getEvolutionChain(chainId: number | string): Promise<EvolutionChain> {
     const data = await http.get(`/evolution-chain/${chainId}`)
     return parse(EvolutionChainSchema, data)
+  },
+
+  async getAllNames() {
+    return http.get<{ results: { name: string; url: string }[] }>('/pokemon', {
+      limit: 2000,
+    })
   },
 }

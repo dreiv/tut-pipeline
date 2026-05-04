@@ -1,7 +1,29 @@
-import { object, string, number, array, nullable, any, lazy, type InferOutput } from 'valibot'
+import {
+  object,
+  string,
+  number,
+  array,
+  nullable,
+  lazy,
+  boolean,
+  type InferOutput,
+  type GenericSchema,
+} from 'valibot'
 
 /**
- * 1. Pokemon Detail Schema
+ * 1. Pokemon List Item Schema
+ * The primary contract for the Pokedex grid.
+ */
+export const PokemonListItemSchema = object({
+  id: number(),
+  name: string(),
+  url: string(),
+  image: string(),
+})
+
+/**
+ * 2. Full Pokemon Detail Schema
+ * Reserved for the Detail View only.
  */
 export const PokemonSchema = object({
   id: number(),
@@ -30,7 +52,7 @@ export const PokemonSchema = object({
 })
 
 /**
- * 2. Pokemon Species Schema
+ * 3. Pokemon Species Schema
  */
 export const PokemonSpeciesSchema = object({
   id: number(),
@@ -45,15 +67,26 @@ export const PokemonSpeciesSchema = object({
 })
 
 /**
- * 3. Evolution Chain Schema
+ * 4. Evolution Chain Schema (Recursive)
+ * We define the interface to solve the ESLint "no-explicit-any" error
+ * caused by the circular reference in evolves_to.
  */
-export const EvolutionDetailSchema: any = object({
+interface EvolutionDetail {
+  species: {
+    name: string
+    url: string
+  }
+  evolves_to: EvolutionDetail[]
+  is_baby: boolean
+}
+
+export const EvolutionDetailSchema: GenericSchema<EvolutionDetail> = object({
   species: object({
     name: string(),
     url: string(),
   }),
   evolves_to: array(lazy(() => EvolutionDetailSchema)),
-  is_baby: any(),
+  is_baby: boolean(),
 })
 
 export const EvolutionChainSchema = object({
@@ -62,8 +95,7 @@ export const EvolutionChainSchema = object({
 })
 
 /**
- * 4. Pokemon Type Response Schema
- * Added to handle filtering by type.
+ * 5. Type Response Schema
  */
 export const PokemonTypeResponseSchema = object({
   pokemon: array(
@@ -77,6 +109,7 @@ export const PokemonTypeResponseSchema = object({
 })
 
 // Type Inferences
+export type PokemonListItem = InferOutput<typeof PokemonListItemSchema>
 export type Pokemon = InferOutput<typeof PokemonSchema>
 export type PokemonSpecies = InferOutput<typeof PokemonSpeciesSchema>
 export type EvolutionChain = InferOutput<typeof EvolutionChainSchema>
