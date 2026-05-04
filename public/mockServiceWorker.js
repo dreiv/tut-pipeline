@@ -1,7 +1,5 @@
 /* eslint-disable */
 // @ts-nocheck
-/* oxfmt-disable */
-/* tslint:disable */
 
 /**
  * Mock Service Worker.
