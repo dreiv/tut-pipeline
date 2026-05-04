@@ -21,6 +21,7 @@
     "test": "vitest",
     "test:unit": "vitest --project=unit",
     "test:browser": "vitest --project=browser",
+    "test:contract": "vitest --project=contract",
     "test:e2e": "playwright test",
     "build": "run-s check build-only",
     "build-only": "vite build",

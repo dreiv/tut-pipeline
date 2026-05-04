@@ -13,6 +13,7 @@ export default defineConfig({
     ...commonTestConfig,
     root: fileURLToPath(new URL('./', import.meta.url)),
     projects: [
+      /* UNIT TESTS */
       {
         ...mergeConfig(viteConfig, {
           test: {
@@ -24,6 +25,7 @@ export default defineConfig({
           },
         }),
       },
+      /* COMPONENT TESTS */
       {
         ...mergeConfig(viteConfig, {
           test: {
@@ -36,6 +38,18 @@ export default defineConfig({
               instances: [{ browser: 'chromium' }],
               headless: true,
             },
+          },
+        }),
+      },
+      /* CONTRACT TESTS */
+      {
+        ...mergeConfig(viteConfig, {
+          test: {
+            globals: true,
+            name: 'contract',
+            environment: 'node',
+            include: ['src/**/*.contract.{test,spec}.ts'],
+            testTimeout: 10000,
           },
         }),
       },
