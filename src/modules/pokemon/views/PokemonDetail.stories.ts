@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/vue3'
-import { http, HttpResponse, delay } from 'msw'
+import { http, HttpResponse } from 'msw'
 import PokemonDetail from './PokemonDetail.vue'
 
 const meta: Meta<typeof PokemonDetail> = {

@@ -1,6 +1,10 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import DefaultLayout from '@/core/layouts/DefaultLayout.vue'
 
+// Eagerly import the core views
+import PokemonList from '@/modules/pokemon/views/PokemonList.vue'
+import PokemonDetail from '@/modules/pokemon/views/PokemonDetail.vue'
+
 export const Routes = {
   HOME: 'home',
   POKEMON_DETAIL: 'pokemon-detail',
@@ -17,26 +21,23 @@ const router = createRouter({
       path: '/',
       component: DefaultLayout,
       children: [
-        // Home - Pokemon List
         {
           path: '',
           name: Routes.HOME,
-          component: () => import('@/modules/pokemon/views/PokemonList.vue'),
+          component: PokemonList,
         },
-        // Pokemon Detail
         {
           path: 'pokemon/:id',
           name: Routes.POKEMON_DETAIL,
-          component: () => import('@/modules/pokemon/views/PokemonDetail.vue'),
-          props: true, // Allows passing :id as a prop to the component
+          component: PokemonDetail,
+          props: true,
         },
-        // Favorites
+        // Secondary features stay lazy
         {
           path: 'favorites',
           name: Routes.FAVORITES,
           component: () => import('@/modules/collection/FavoritesView.vue'),
         },
-        // My Team
         {
           path: 'my-team',
           name: Routes.MY_TEAM,
@@ -44,7 +45,6 @@ const router = createRouter({
         },
       ],
     },
-    // Error & 404 Pages
     {
       path: '/error',
       name: Routes.ERROR,

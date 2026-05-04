@@ -15,6 +15,7 @@ coverage
 playwright-report
 test-results
 server/src/_generated/
+.lighthouseci/
 
 # Environment Variables
 .env

@@ -1,0 +1,22 @@
+[
+  {
+    "path": "dist/assets/index-*.js",
+    "limit": "30 kB",
+    "name": "Core Bundle (List + Detail)"
+  },
+  {
+    "path": "dist/assets/runtime-core.*.js",
+    "limit": "25 kB",
+    "name": "Vue Runtime"
+  },
+  {
+    "path": "dist/assets/index-*.css",
+    "limit": "10 kB",
+    "name": "Global CSS"
+  },
+  {
+    "path": ["dist/assets/FavoritesView-*.js", "dist/assets/MyTeamView-*.js"],
+    "limit": "3 kB",
+    "name": "Secondary Lazy Routes"
+  }
+]
