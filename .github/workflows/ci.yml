@@ -43,7 +43,7 @@ jobs:
         run: npm run size
 
       - name: Lighthouse Performance Audit ⚡
-        run: npx lhci collect --url="/tut-pipeline/"
+        run: npx lhci collect
 
       - name: Upload Artifacts 📤
         if: github.ref == 'refs/heads/main'
