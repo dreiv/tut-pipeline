@@ -15,6 +15,13 @@ jobs:
     steps:
       - name: Checkout 🛎️
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Required for Gitleaks to scan commit history
+
+      - name: Gitleaks Secret Scan 🔒
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setup Node.js 📦
         uses: actions/setup-node@v4
