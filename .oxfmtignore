@@ -1,0 +1,2 @@
+# Ignore MSW generated worker
+public/mockServiceWorker.js
