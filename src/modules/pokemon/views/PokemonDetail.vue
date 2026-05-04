@@ -67,6 +67,7 @@ const getStatColor = (val: number) => {
   <div class="max-w-5xl mx-auto space-y-10 pb-20 animate-fade">
     <button
       @click="$router.back()"
+      aria-label="Back to Pokedex"
       class="glass-button px-6 py-3 text-xs font-black uppercase tracking-widest gap-3 group"
     >
       <ArrowLeft class="w-4 h-4 transition-transform group-hover:-translate-x-1" />
@@ -88,15 +89,20 @@ const getStatColor = (val: number) => {
       </button>
     </div>
 
-    <div v-else-if="pokemon && species" class="space-y-20">
+    <div v-else-if="pokemon && species" class="pokemon-card-detail space-y-20">
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
         <div class="lg:col-span-5 space-y-6 lg:sticky lg:top-8">
           <div
             class="relative aspect-square glass-button !p-12 flex items-center justify-center overflow-hidden rounded-[3rem]"
           >
+            <!-- FIXED: Added optional chaining and a fallback color to resolve the TS 'undefined' error[cite: 2] -->
             <div
               class="absolute inset-0 blur-[100px] opacity-20 transition-colors duration-700"
-              :style="{ backgroundColor: `var(--color-type-${pokemon.types[0].type.name})` }"
+              :style="{
+                backgroundColor: pokemon.types?.[0]
+                  ? `var(--color-type-${pokemon.types[0].type.name})`
+                  : 'transparent',
+              }"
             />
             <img
               :src="pokemon.sprites.other['official-artwork'].front_default ?? ''"
@@ -110,6 +116,7 @@ const getStatColor = (val: number) => {
               @click="store.toggleFavorite(pokemon.id)"
               class="glass-button flex-1 py-5 font-black uppercase tracking-widest text-xs gap-3"
               :class="{ '!border-accent/40 !bg-accent/10 !text-accent': isFavorite }"
+              aria-label="Favorite"
             >
               <Heart class="w-5 h-5" :class="{ 'fill-current': isFavorite }" />
               {{ isFavorite ? 'Favorited' : 'Add Favorite' }}
@@ -118,6 +125,7 @@ const getStatColor = (val: number) => {
               @click="isOnTeam ? store.removeFromTeam(pokemon.id) : store.addToTeam(pokemon.id)"
               class="glass-button p-5"
               :class="{ '!text-accent !border-accent/30 !bg-accent/10': isOnTeam }"
+              aria-label="Add or remove from team"
             >
               <component :is="isOnTeam ? Trash2 : Plus" class="w-6 h-6" />
             </button>

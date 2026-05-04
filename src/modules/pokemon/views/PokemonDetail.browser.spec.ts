@@ -21,7 +21,7 @@ describe('PokemonDetail', () => {
       global: { plugins: [router, pinia] },
     })
 
-    const favButton = screen.getByRole('button', { name: /add favorite/i })
+    const favButton = screen.getByRole('button', { name: /favorite/i })
     await favButton.click()
 
     expect(store.toggleFavorite).toHaveBeenCalledWith(1)

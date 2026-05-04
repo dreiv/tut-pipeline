@@ -23,6 +23,7 @@ const isOnTeam = computed(() => store.team.includes(props.id))
       <button
         @click.stop.prevent="store.toggleFavorite(id)"
         class="glass-button w-10 h-10 !p-0 shadow-sm transition-all duration-300 hover:scale-110 active:scale-95"
+        :aria-label="isFavorite ? 'Remove from favorites' : 'Add to favorites'"
         :class="[
           isFavorite
             ? 'opacity-100 text-accent border-accent/40 bg-accent/10 shadow-[0_0_15px_rgba(var(--accent-rgb),0.2)]'
@@ -35,6 +36,7 @@ const isOnTeam = computed(() => store.team.includes(props.id))
       <button
         @click.stop.prevent="isOnTeam ? store.removeFromTeam(id) : store.addToTeam(id)"
         class="glass-button w-10 h-10 !p-0 shadow-sm transition-all duration-300 hover:scale-110 active:scale-95"
+        :aria-label="isOnTeam ? 'Remove from team' : 'Add to team'"
         :class="[
           isOnTeam
             ? 'opacity-100 text-text-h border-text-h/20 bg-text-h/5'
