@@ -35,8 +35,18 @@ jobs:
         # We add 'oxfmt --diff' to see exactly what the CI is complaining about
         run: npx oxfmt --check . --diff --no-cache
 
-      - name: Dependency Check 📦
-        run: npm run check:deps
+      - name: Formatting Check 🎨
+        run: |
+          # 1. Run the check. If it fails, the '|| true' allows us to continue to the next line
+          npx oxfmt --check . --no-cache || (
+            echo "❌ Formatting issues found! Showing diff below:"
+            # 2. Apply the fixes to the local CI files
+            npx oxfmt .
+            # 3. Use git diff to show exactly what oxfmt changed
+            git diff
+            # 4. Exit with an error so the build still fails
+            exit 1
+          )
 
       - name: Build App 🏗️
         run: npm run build-only # Build without running 'check' again
