@@ -32,10 +32,6 @@ jobs:
         run: npm run lint
 
       - name: Formatting Check 🎨
-        # We add 'oxfmt --diff' to see exactly what the CI is complaining about
-        run: npx oxfmt --check . --diff --no-cache
-
-      - name: Formatting Check 🎨
         run: |
           # 1. Run the check. If it fails, the '|| true' allows us to continue to the next line
           npx oxfmt --check . --no-cache || (
