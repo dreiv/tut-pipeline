@@ -1,4 +1,11 @@
 {
-  "entry": ["env.d.ts"],
-  "ignoreDependencies": ["lint-staged", "@vue/test-utils"]
+  "entry": ["src/**/*.stories.ts", "src/**/*.spec.ts", "e2e/**/*.spec.ts", "env.d.ts"],
+  "project": ["src/**/*.{ts,vue,css}"],
+  "ignoreDependencies": [
+    "lint-staged",
+    "@vue/test-utils",
+    "@storybook/vue3",
+    "@axe-core/playwright"
+  ],
+  "ignoreExportsUsedInFile": true
 }

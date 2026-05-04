@@ -80,7 +80,7 @@ interface EvolutionDetail {
   is_baby: boolean
 }
 
-export const EvolutionDetailSchema: GenericSchema<EvolutionDetail> = object({
+const EvolutionDetailSchema: GenericSchema<EvolutionDetail> = object({
   species: object({
     name: string(),
     url: string(),
