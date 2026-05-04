@@ -36,8 +36,9 @@ jobs:
         run: npm run check
 
       - name: Build App 🏗️
-        # Build with the base path required for GitHub Pages
         run: npm run build-only -- --base=/tut-pipeline/
+        env:
+          VITE_API_URL: ${{ secrets.VITE_API_URL }}
 
       - name: Bundle Size Check ⚖️
         run: npm run size
