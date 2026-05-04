@@ -29,20 +29,13 @@ jobs:
         run: npm run check
 
       - name: Build App 🏗️
-        run: npm run build-only # Build without running 'check' again
+        run: npm run build-only
 
       - name: Bundle Size Check ⚖️
         run: npm run size
 
       - name: Lighthouse Performance Audit ⚡
         run: npm run lhci
-
-      - name: Build Storybook 📚
-        if: github.ref == 'refs/heads/main'
-        run: |
-          npm run build-storybook
-          mkdir -p dist/ux
-          mv storybook-static/* dist/ux/
 
       - name: Upload Artifacts 📤
         if: github.ref == 'refs/heads/main'
