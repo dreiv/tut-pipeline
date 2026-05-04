@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/vue3'
 import { http, HttpResponse, delay } from 'msw'
+import { createTestingPinia } from '@pinia/testing'
 import PokemonDetail from './PokemonDetail.vue'
 
 const mockPokemon = {
@@ -8,27 +9,45 @@ const mockPokemon = {
   height: 7,
   weight: 69,
   sprites: {
-    front_default: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png',
+    other: {
+      'official-artwork': {
+        front_default:
+          'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/1.png',
+      },
+    },
   },
-  types: [
-    { slot: 1, type: { name: 'grass', url: 'https://pokeapi.co/api/v2/type/12/' } },
-    { slot: 2, type: { name: 'poison', url: 'https://pokeapi.co/api/v2/type/4/' } },
+  stats: [
+    { base_stat: 45, stat: { name: 'hp' } },
+    { base_stat: 49, stat: { name: 'attack' } },
   ],
+  types: [{ type: { name: 'grass' } }, { type: { name: 'poison' } }],
 }
 
 const meta: Meta<typeof PokemonDetail> = {
   title: 'Modules/Pokemon/PokemonDetail',
   component: PokemonDetail,
   tags: ['autodocs'],
-  argTypes: {
-    id: { control: 'text' },
-  },
+  decorators: [
+    () => ({
+      template: '<div class="p-6 bg-bg min-h-screen"><story /></div>',
+      global: { plugins: [createTestingPinia()] },
+    }),
+  ],
   parameters: {
     msw: {
       handlers: [
-        http.get('*/pokemon/1', () => {
-          return HttpResponse.json(mockPokemon)
-        }),
+        http.get('*/pokemon/1', () => HttpResponse.json(mockPokemon)),
+        http.get('*/pokemon-species/1', () =>
+          HttpResponse.json({
+            evolution_chain: { url: '*/evolution-chain/1/' },
+            flavor_text_entries: [
+              { flavor_text: 'A strange seed was planted on its back.', language: { name: 'en' } },
+            ],
+          }),
+        ),
+        http.get('*/evolution-chain/1', () =>
+          HttpResponse.json({ chain: { species: { name: 'bulbasaur' }, evolves_to: [] } }),
+        ),
       ],
     },
   },
@@ -37,22 +56,10 @@ const meta: Meta<typeof PokemonDetail> = {
 export default meta
 type Story = StoryObj<typeof PokemonDetail>
 
-/**
- * Standard success view.
- */
-export const Success: Story = {
-  args: {
-    id: '1',
-  },
-}
+export const Success: Story = { args: { id: '1' } }
 
-/**
- * Tests the skeleton/loading state by forcing a delay.
- */
 export const Loading: Story = {
-  args: {
-    id: '99',
-  },
+  args: { id: '99' },
   parameters: {
     msw: {
       handlers: [
@@ -65,44 +72,11 @@ export const Loading: Story = {
   },
 }
 
-/**
- * Tests how the component handles a 404 response.
- */
-export const NotFound: Story = {
-  args: {
-    id: 'unknown',
-  },
+export const ErrorState: Story = {
+  args: { id: '404' },
   parameters: {
     msw: {
-      handlers: [
-        http.get('*/pokemon/unknown', () => {
-          return new HttpResponse(null, {
-            status: 404,
-            statusText: 'Pokemon Not Found',
-          })
-        }),
-      ],
-    },
-  },
-}
-
-/**
- * Verifies that the UI handles Valibot validation errors gracefully.
- */
-export const SchemaError: Story = {
-  args: {
-    id: 'err-400',
-  },
-  parameters: {
-    msw: {
-      handlers: [
-        http.get('*/pokemon/err-400', () => {
-          return HttpResponse.json({
-            id: 'wrong-type', // Should be a number
-            invalid_payload: true,
-          })
-        }),
-      ],
+      handlers: [http.get('*/pokemon/404', () => new HttpResponse(null, { status: 404 }))],
     },
   },
 }

@@ -1,4 +1,6 @@
 <script setup lang="ts">
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { computed } from 'vue'
 import { ArrowRight } from 'lucide-vue-next'
 import { Routes } from '@/router'
@@ -8,7 +10,6 @@ const props = defineProps<{
   evolution: EvolutionChain
 }>()
 
-// Flattens the recursive API response into a simple array
 const flattenedChain = computed(() => {
   const chain: { name: string; id: number }[] = []
   let current = props.evolution.chain
@@ -16,7 +17,8 @@ const flattenedChain = computed(() => {
   while (current) {
     const id = Number(current.species.url.split('/').filter(Boolean).pop())
     chain.push({ name: current.species.name, id })
-    current = current.evolves_to[0]
+    current =
+      current.evolves_to && current.evolves_to.length > 0 ? current.evolves_to[0] : (null as any)
   }
   return chain
 })

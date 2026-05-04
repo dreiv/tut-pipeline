@@ -32,7 +32,6 @@ const typeNames = [
 ]
 
 async function loadPokemon() {
-  // Guard: Stop if we are already loading, at the end, or filtered by type
   if (loading.value || !store.hasMore || store.activeType) return
 
   try {
@@ -55,7 +54,7 @@ async function handleTypeChange(event: Event) {
 
   try {
     loading.value = true
-    // Single API call via the store/service
+
     await store.fetchByType(typeName)
   } catch {
     error.value = `Failed to load ${typeName} Pokemon`
@@ -64,7 +63,6 @@ async function handleTypeChange(event: Event) {
   }
 }
 
-// Infinite scroll - only active when not filtering
 useIntersectionObserver(loadMoreTrigger, ([entry]) => {
   if (entry?.isIntersecting && !store.activeType) {
     loadPokemon()

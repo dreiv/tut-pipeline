@@ -33,7 +33,6 @@ async function loadAllData() {
     pokemon.value = pData
     species.value = sData
 
-    // Evolution chain requires the ID from the species response
     const chainId = sData.evolution_chain.url.split('/').filter(Boolean).pop()
     if (chainId) {
       evolution.value = await pokemonService.getEvolutionChain(chainId)
@@ -51,7 +50,6 @@ watch(() => props.id, loadAllData)
 const isFavorite = computed(() => store.favorites.includes(Number(props.id)))
 const isOnTeam = computed(() => store.team.includes(Number(props.id)))
 
-// Clean up weird PokeAPI escape characters in flavor text
 const description = computed(() =>
   species.value?.flavor_text_entries
     .find((f) => f.language.name === 'en')
@@ -61,7 +59,7 @@ const description = computed(() =>
 const getStatColor = (val: number) => {
   if (val < 50) return 'bg-red-500'
   if (val < 90) return 'bg-yellow-500'
-  return 'bg-accent' // Your brand orange
+  return 'bg-accent'
 }
 </script>
 

@@ -8,12 +8,9 @@ const store = usePokemonStore()
 
 const teamPokemon = computed<PokemonListItem[]>(() =>
   store.team.map((id) => {
-    // Access the cache we added to the store
-    const cached = store.pokemonCache?.[id]
+    const existing = store.pokemonList.find((p) => p.id === id)
+    if (existing) return existing
 
-    if (cached) return cached
-
-    // Fallback construction: No extra API calls
     return {
       id,
       name: `Squad Member #${id}`,

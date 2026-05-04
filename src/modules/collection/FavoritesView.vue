@@ -8,16 +8,12 @@ const store = usePokemonStore()
 
 const favoritePokemon = computed<PokemonListItem[]>(() =>
   store.favorites.map((id) => {
-    // Check if we already have the data in our store's cache
-    const cached = store.pokemonCache?.[id]
+    const existing = store.pokemonList.find((p) => p.id === id)
+    if (existing) return existing
 
-    if (cached) return cached
-
-    // Fallback: Manually construct the minimum data required for the card
-    // This maintains the "one-call" rule—no extra API hits!
     return {
       id,
-      name: `Pokemon #${id}`, // Or just capitalize a saved name if you extend the cache
+      name: `Pokemon #${id}`,
       url: `https://pokeapi.co/api/v2/pokemon/${id}/`,
       image: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`,
     }
