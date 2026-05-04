@@ -16,7 +16,7 @@ jobs:
       - name: Checkout 🛎️
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # Required for Gitleaks to scan commit history
+          fetch-depth: 0
 
       - name: Gitleaks Secret Scan 🔒
         uses: gitleaks/gitleaks-action@v2
@@ -36,13 +36,14 @@ jobs:
         run: npm run check
 
       - name: Build App 🏗️
-        run: npm run build-only
+        # Build with the base path required for GitHub Pages
+        run: npm run build-only -- --base=/tut-pipeline/
 
       - name: Bundle Size Check ⚖️
         run: npm run size
 
       - name: Lighthouse Performance Audit ⚡
-        run: npm run lhci
+        run: npx lhci collect --url="/tut-pipeline/"
 
       - name: Upload Artifacts 📤
         if: github.ref == 'refs/heads/main'
